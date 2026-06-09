@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Kamiran Ringkas</title>
+    <!-- Memuatkan MathLive untuk input formula matematik yang cantik -->
+    <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive-static.css">
+    <script src="https://unpkg.com/mathlive"></script>
+    <!-- Memuatkan Algebrite untuk pengiraan CAS (Computer Algebra System) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/algebrite/1.4.0/algebrite.bundle-min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        math-field {
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #bdc3c7;
+            outline: none;
+            background-color: #fafafa;
+            margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result-box {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .result-title {
+            font-weight: bold;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        #output {
+            font-size: 1.3rem;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Kalkulator Kamiran</h2>
+    <p style="color: #7f8c8d; font-size: 0.9rem; margin-bottom: 10px;">Masukkan fungsi dalam sebutan $x$ (Contoh: $3x^2 + 2x$):</p>
+    
+    <!-- Input Matematik Interaktif -->
+    <math-field id="input-field">3x^2 + 2x</math-field>
+    
+    <button onclick="kiraKamiran()">Kira Kamiran $\int$</button>
+    
+    <div class="result-box">
+        <div class="result-title">Hasil Kamiran (Jawapan):</div>
+        <div id="output">$$x^3 + x^2 + C$$</div>
+    </div>
+</div>
+
+<script>
+    function kiraKamiran() {
+        const mf = document.getElementById('input-field');
+        const outputDiv = document.getElementById('output');
+        
+        // Mengambil text biasa (ascii math) daripada MathLive untuk dihantar ke Algebrite
+        let inputExpression = mf.getValue('ascii-math');
+        
+        try {
+            // Proses pengiraan kamiran menggunakan Algebrite terhadap pembolehubah 'x'
+            let jawapan = Algebrite.integral(inputExpression, 'x').toString();
+            
+            // Format output ringkas jika jawapan kosong atau ralat
+            if (jawapan === "0" && inputExpression.trim() === "") {
+                outputDiv.innerHTML = "Sila masukkan fungsi.";
+                return;
+            }
+
+            // Tukar format output komputer kepada format matematik yang lebih mesra pengguna
+            jawapan = jawapan.replace(/\*/g, ''); // Buang tanda darab *
+            
+            outputDiv.innerHTML = "$$" + jawapan + " + C$$";
+        } catch (error) {
+            outputDiv.innerHTML = "<span style='color:red; font-size:1rem;'>Ralat: Sila pastikan format betul.</span>";
+        }
+    }
+</script>
+
+</body>
+</html>
